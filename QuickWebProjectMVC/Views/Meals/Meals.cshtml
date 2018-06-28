@@ -1,8 +1,51 @@
-﻿@{
+﻿<!-- Meals.cshtml -->
+
+@{
     ViewBag.Title = "Services";
 }
 
 <div>
-    <h2>Meals</h2>        
+    <h2>Meals</h2>
     <p>We offer various meals.</p>
 </div>
+<div class="meals">
+    <!-- Meals are inserted via AJAX request -->
+</div>
+
+<script>
+    // move this code into custom folder inside "Scripts" folder
+
+    // originally wanted to use JQuery (to support old browsers) 
+    // make sure to make your API details private (by storing them in their own class) 
+    // https://api.edamam.com/search?q=chicken&&r=r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_9b5945e03f05acbf9d69625138385408&app_id=e5c13a39&app_key=4b8729c335c3355e67fad795b5050350 
+
+    /* // was moved to _Layout.cshtml due to JQuery defintion issue/s 
+    $.get("https://api.edamam.com/api/food-database/parser", data => {
+        $(".meals").html(data);
+        alert("Load was performed.");
+    }); 
+    */
+    document.addEventListener("DOMContentLoaded", () => { // equivalent to JQuery's "document.ready" 
+        fetchMeal("https://api.edamam.com/search?q=chicken&r=r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_9b5945e03f05acbf9d69625138385408&app_id=e5c13a39&app_key=4b8729c335c3355e67fad795b5050350"); // not sure why chicken is outputed twice (once bold the other not) 
+        fetchMeal("https://api.edamam.com/search?q=turkey&r=r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_9b5945e03f05acbf9d69625138385408&app_id=e5c13a39&app_key=4b8729c335c3355e67fad795b5050350");
+        fetchMeal("https://api.edamam.com/search?q=steak&r=r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_9b5945e03f05acbf9d69625138385408&app_id=e5c13a39&app_key=4b8729c335c3355e67fad795b5050350");
+    }); 
+
+    function fetchMeal(endpoint) {
+        fetch(endpoint, {
+            // mode: 'no-cors',
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            response.json().then(data => {
+                console.log(data);
+                // document.querySelector(".meals").innerHTML = `<h4>${data.q}</h4>`; // innerHTML may not be safe to use 
+                
+                document.querySelector(".meals").innerHTML += "<b>:" + data.q + "</b><br />"; // innerHTML may not be safe to use
+            });
+            }).catch(err => console.log('Error - ' + err, 'background: purple; color: #222')); // Coloured console output may only work on Chrome browser 
+    }
+</script> 
